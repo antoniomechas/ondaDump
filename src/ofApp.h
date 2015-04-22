@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "OndaDump.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -9,6 +10,8 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+		void setupGui();
+		void resetPressed();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -20,6 +23,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		OndaDump ondaDump;
-
+		OndaDump	ondaDump;
+		ofxPanel	gui;
+		ofxButton	paramReset;
 };

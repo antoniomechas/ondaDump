@@ -3,8 +3,24 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	
-	ondaDump.setup(ofGetWidth(), ofGetHeight(), ofGetHeight() / 2, 20, 20);
+	ondaDump.setup(ofGetWidth(), ofGetHeight(), ofGetHeight() / 2, 40, 40);
+	setupGui();
+}
 
+void ofApp::setupGui()
+{
+	paramReset.addListener(this, &ofApp::resetPressed);
+
+	gui.setup("params");
+    gui.add(paramReset.setup("reset",false));
+	gui.add(ondaDump.paramSpring.setup("spring", 0.1, 0.01, 2));
+    gui.add(ondaDump.paramAttractionForce.setup("attractionForce", 0.1, 0.01, 10));
+
+}
+
+void ofApp::resetPressed()
+{
+	ondaDump.setup(ofGetWidth(), ofGetHeight(), ofGetHeight() / 2, 40, 40);
 }
 
 //--------------------------------------------------------------
@@ -16,6 +32,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofBackground(0,0,0);
 	ofSetColor(255,255,255);
+	gui.draw();
 	ondaDump.draw();
 }
 
