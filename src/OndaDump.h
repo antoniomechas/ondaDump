@@ -23,6 +23,7 @@ class OndaDump
 		void		setupBox2d		( );
 		ofVec2f		getDampedValue	( ofVec2f oldValue, ofVec2f newValue, float alpha );
 		int			getIndexByPos	( ofVec2f pos );
+		int			getColByPos		( ofVec2f pos );
 		void		drawBox2d		( );
 
 		int width;
@@ -44,4 +45,5 @@ class OndaDump
 		vector<ofPtr<ofxBox2dJoint> >	joints;			  //	joints
 
 		bool							bInited;
+		float							seed;
 };

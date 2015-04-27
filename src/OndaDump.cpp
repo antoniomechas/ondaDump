@@ -26,13 +26,17 @@ void OndaDump::setup ( int w, int h, int posY, int intervalos, int gridStep)
 	for (int i = 0 ; i < intervalos ; i++)
 		onda[i] = 0;
 	
-	gridWidth = width / gridStep;
-	gridHeight = height / gridStep;
+	//gridWidth = width / gridStep;
+	//gridHeight = height / gridStep;
+	gridWidth = intervalos;
+	gridHeight = 1;
 	grid = new ofVec2f[gridHeight * gridWidth];
 	memset(grid, 0, gridHeight * gridWidth * sizeof(ofVec2f));
 
 	setupBox2d();
 	bInited = true;
+
+	seed = ofRandom(1,1000);
 }
 
 void OndaDump::setupBox2d()
@@ -137,8 +141,8 @@ void OndaDump::drawBox2d()
 void OndaDump::draw ( )
 {
 
-	drawBox2d();
-	return;
+	//drawBox2d();
+	//return;
 
 	drawGrid();
 	
@@ -149,14 +153,20 @@ void OndaDump::draw ( )
 	pol.curveTo(0, posY - onda[0]);
 	
 	float step = (float)width / (float)intervalos;
+	//cout << "Intervalos: " << intervalos << ", gridWidth: " << gridWidth << endl;
 
 	for (int i = 1 ; i < intervalos ; i++)
 	{
 		float v = 0;
 		for (int k = 0 ; k < gridHeight ; k++)
 			v = v + grid[k * gridWidth + i].y;
-		onda[i] = v;
-		pol.curveTo(i * step, posY + onda[i]);
+		
+		onda[i] = v * 1.;
+		//onda[i] = onda[i] * 0.99;
+		//pol.curveTo(i * step, posY + (-.0 + sin(ofNoise(seed + (float)i + ofGetElapsedTimeMillis()) * 10. + ofGetElapsedTimeMillis() * .001f)) * onda[i]);
+		pol.curveTo(i * step, posY + (sin( ofNoise(i, ofGetElapsedTimeMillis() * .001f) + ofGetElapsedTimeMillis() * .01f)) * onda[i]);
+		//if (onda[i]>0) 
+		//	cout << onda[i] << " ->sin = " << sin(onda[i]) << " # " ;
 		//ofCircle(i * step, posY + onda[i],10);
 	}
 
@@ -186,15 +196,46 @@ void OndaDump::update ( )
 	}
 	box2d.update();
 	float damp = .996f;
+	
+	//ofVec2f *gridCols = new ofVec2f[gridWidth];
+	//for (int i = 0 ; i < gridWidth ; i++)
+	//{
+	//	float v = 0;
+	//	for (int k = 0 ; k < gridHeight ; k++)
+	//		v = v + grid[k * gridWidth + i].y;
+	//	gridCols[i].y = v;
+	//}
+
+	//float amount = 0.001f;
+	//grid[0].y += gridCols[1].y * amount;
+	//grid[gridWidth-1].y += gridCols[gridWidth-2].y * amount;
+
+	//for (int i = 1 ; i < gridWidth -1; i++)
+	//	grid[i].y += gridCols[i-1].y * amount + gridCols[i+1].y * amount;
+
+	//for (int i = 0 ; i < gridHeight * gridWidth ; i++)
+	//{
+	//	grid[i] = grid[i] * damp;
+	//	if (grid[i].y < 0.01)
+	//		grid[i].y = 0;
+	//	if (grid[i].x < 0.01)
+	//		grid[i].x = 0;
+	//}
 	for (int i = 0 ; i < gridHeight * gridWidth ; i++)
 		grid[i] = grid[i] * damp;
+
 }
 
 void OndaDump::addForce	( ofPoint p, ofVec2f force )
 {
-	int index = getIndexByPos(p);
+	//int index = getIndexByPos(p);
+	int index = getColByPos(p);
 	
 	grid[index] = grid[index] + force;
+	//if (index > 0)
+	//	grid[index-1] = grid[index-1] + force * .8f;
+	//if (index < intervalos)
+	//	grid[index+1] = grid[index+1] + force * .8f;
 
 }
 
@@ -208,5 +249,11 @@ int OndaDump::getIndexByPos ( ofVec2f pos )
 	int x = floor(pos.x / gridStep); 
 	int y = floor(pos.y / gridStep);
 	return (y * gridWidth + x);
+}
+
+int OndaDump::getColByPos ( ofVec2f pos )
+{
+	int x = floor(pos.x / gridStep); 
+	return (x);
 }
 
